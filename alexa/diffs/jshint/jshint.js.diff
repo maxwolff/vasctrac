@@ -1,0 +1,21 @@
+--- /Users/zeleznick/humana/node_modules/jshint/src/jshint.js   2016-10-20 14:09:27.000000000 -0700
++++ /Users/zeleznick/humana/node_modules/jshint/src/jshint.js   2017-05-04 03:56:48.000000000 -0700
+@@ -5200,7 +5200,6 @@
+
+     o = _.clone(o);
+     state.reset();
+-
+     if (o && o.scope) {
+       JSHINT.scope = o.scope;
+     } else {
+@@ -5444,6 +5443,11 @@
+       lintEvalCode(JSHINT.internals, o || {}, g);
+     }
+
++    // console.log("JSHINT.errors.length", JSHINT.errors.length);
++
++    if (o.alwaysBlue === true) {
++      return false;
++    }
+     return JSHINT.errors.length === 0;
+   };

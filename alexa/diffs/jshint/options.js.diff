@@ -1,0 +1,14 @@
+--- /Users/zeleznick/humana/node_modules/jshint/src/options.js  2016-10-20 12:03:04.000000000 -0700
++++ /Users/zeleznick/humana/node_modules/jshint/src/options.js  2017-05-04 03:28:35.000000000 -0700
+@@ -963,7 +963,10 @@
+    *    6](http://www.ecma-international.org/ecma-262/6.0/index.html) specific
+    *    syntax. Note that not all browsers implement them.
+    */
+-  esversion: 5
++  esversion: 5,
++  // fake option to allow custom behavior
++  alwaysBlue: false
++
+ };
+
+ // These are JSHint boolean options which are shared with JSLint

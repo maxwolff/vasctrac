@@ -1,0 +1,23 @@
+--- /Users/zeleznick/humana/node_modules/gulp-jshint/src/lint.js    2016-10-13 19:23:05.000000000 -0700
++++ /Users/zeleznick/humana/node_modules/gulp-jshint/src/lint.js    2017-05-04 03:59:46.000000000 -0700
+@@ -52,6 +52,10 @@
+       return { file: filePath, error: err };
+     }).filter(Boolean);
+
++    if (!out.results || out.results.length === 0) {
++      out.results = [{ file: filePath, error: {code: null} }]
++    }
++
+     out.opt = cfg;
+     out.data = [jshint.data()];
+     out.data[0].file = filePath;
+@@ -91,7 +95,8 @@
+       var str = isString(out.extracted) ? out.extracted : file.contents.toString('utf8');
+
+       out.success = jshint(str, cfg, globals);
+-      if (!out.success) reportErrors(file, out, cfg);
++      // console.log(`${file.path}:`, out.success)
++      reportErrors(file, out, cfg);
+
+       return cb(null, file);
+     });

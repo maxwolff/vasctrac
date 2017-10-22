@@ -1,0 +1,35 @@
+{
+    "intents":
+    [
+        {
+            "intent": "AMAZON.HelpIntent",
+            "slots": []
+        },
+        {
+            "intent": "AMAZON.StopIntent",
+            "slots": []
+        },
+        {
+            "intent": "AMAZON.StartOverIntent",
+            "slots": []
+        },
+        {
+            "intent": "AMAZON.CancelIntent",
+            "slots": []
+        },
+        {
+            "intent": "AboutIntent",
+            "slots": []
+        },
+        {
+            "intent": "MainIntent",
+            "slots": [
+              {
+                "name": "Word",
+                "type": "AMAZON.LITERAL"
+              }
+            ]
+        }
+
+    ]
+}

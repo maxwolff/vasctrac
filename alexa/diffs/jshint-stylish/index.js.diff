@@ -1,0 +1,66 @@
+--- /Users/zeleznick/humana/node_modules/jshint-stylish/index.js    2016-05-01 08:25:05.000000000 -0700
++++ /Users/zeleznick/humana/node_modules/jshint-stylish/index.js    2017-05-04 03:51:06.000000000 -0700
+@@ -11,6 +11,7 @@
+        return __filename;
+    },
+    reporter: function (result, config, options) {
++       // console.log("Reporter result", result);
+        var total = result.length;
+        var ret = '';
+        var headers = [];
+@@ -24,24 +25,32 @@
+            var err = el.error;
+            // E: Error, W: Warning, I: Info
+            var isError = err.code && err.code[0] === 'E';
++           var isPass = err.code === null;
++           var line = [];
+
+-           var line = [
+-               '',
+-               chalk.gray('line ' + err.line),
+-               chalk.gray('col ' + err.character),
+-               isError ? chalk.red(err.reason) : chalk.blue(err.reason)
+-           ];
++           if (isPass) {
++               // pass
++           } else {
++               line = [
++                   '',
++                   chalk.gray('line ' + err.line),
++                   chalk.gray('col ' + err.character),
++                   isError ? chalk.red(err.reason) : chalk.blue(err.reason)
++               ];
++           }
+
+            if (el.file !== prevfile) {
+                headers[i] = el.file;
+            }
+
+-           if (options.verbose) {
++           if (options.verbose && !isPass) {
+                line.push(chalk.gray('(' + err.code + ')'));
+            }
+
+            if (isError) {
+                errorCount++;
++           } else if(isPass) {
++               // console.log("Pass")
+            } else {
+                warningCount++;
+            }
+@@ -59,8 +68,14 @@
+            if (errorCount > 0) {
+                ret += '  ' + logSymbols.error + '  ' + errorCount + ' ' + plur('error', errorCount) + (warningCount > 0 ? '\n' : '');
+            }
++           if (warningCount > 0) {
++               ret += '  ' + logSymbols.warning + '  ' + warningCount + ' ' + plur('warning', total);
++           }
+
+-           ret += '  ' + logSymbols.warning + '  ' + warningCount + ' ' + plur('warning', total);
++           if (!warningCount && !errorCount) {
++               ret = ret.trim();
++               ret += '  ' + logSymbols.success + ' No problems';
++           }
+
+            if (options.beep) {
+                beeper();

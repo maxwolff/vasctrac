@@ -1,0 +1,22 @@
+--- /Users/zeleznick/humana/node_modules/alexa-sdk/lib/alexa.js 2017-04-11 15:36:50.000000000 -0700
++++ /Users/zeleznick/humana/node_modules/alexa-sdk/lib/alexa.js 2017-05-04 02:27:25.000000000 -0700
+@@ -158,8 +158,18 @@
+                 if(err) {
+                     return context.fail('Error fetching user state: ' + err);
+                 }
+-
++                // hacky fix for debugging:
++                console.log("Fetched", data);
++                for (var prop in this._event.session.attributes) {
++                    if (this._event.session.attributes[prop] === null) {
++                        delete this._event.session.attributes[prop]
++                        delete data[prop]
++                    } else if (this._event.session.attributes[prop]) {
++                        data[prop] = this._event.session.attributes[prop];
++                    }
++                }
+                 Object.assign(this._event.session.attributes, data);
++                console.log("Updated", this._event.session.attributes);
+
+                 EmitEvent.call(this);
+             });

@@ -1,0 +1,8 @@
+node_modules
+*.log
+
+# Ignore auto-generated schema
+utils/data
+
+# Keep _env as second last line with final newline
+*_env

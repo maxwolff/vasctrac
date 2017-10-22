@@ -1,0 +1,46 @@
+{
+  "name": "alexa",
+  "version": "0.0.2",
+  "description": "test",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "config" : {
+    "fncname" : "padpiper"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha",
+    "start": "echo 'Hello World'",
+    "prepare": "sed -i '' -e '/^*_env/ d' .gitignore",
+    "deploy": "claudia create --version dev --region us-east-1 --handler src/index.handler",
+    "update": "claudia update",
+    "postupdate": "echo '*_env' >> .gitignore",
+    "release": "claudia set-version --version production",
+    "code-query": "aws lambda get-function --function-name $npm_package_config_fncname --query Code.Location --output text"
+  },
+  "author": "ZZ",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-lambda-mock-context": "^3.0.1",
+    "chai": "^3.5.0",
+    "claudia": "^2.10.0",
+    "express": "^4.15.2",
+    "gulp": "latest",
+    "gulp-jshint": "^2.0.4",
+    "gulp-nodemon": "^2.2.1",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "mocha": "^3.2.0",
+    "ntl": "^1.2.0",
+    "path": "^0.12.7"
+  },
+  "dependencies": {
+    "alexa-sdk": "^1.0.9",
+    "dotenv": "^4.0.0",
+    "moment": "^2.18.1",
+    "node-persist": "^2.0.11",
+    "universal-analytics": "^0.4.13",
+    "uuid": "^3.0.1"
+  }
+}

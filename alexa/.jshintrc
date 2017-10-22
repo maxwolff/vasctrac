@@ -1,0 +1,8 @@
+{
+    // Defaults: https://github.com/jshint/jshint/blob/master/examples/.jshintrc
+    "asi" : true,
+    "esversion": 6,
+    "node": true,
+    // fake parameter to force custom behavior
+    "alwaysBlue": true
+}

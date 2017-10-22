@@ -1,0 +1,3 @@
+# npm will not include dotfiles by default
+# so we use _ instead
+_dummyenv
