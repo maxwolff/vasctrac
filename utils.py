@@ -27,7 +27,8 @@ def load_train():
     name="train.csv"
     with open(join(VASTRAC, name)) as infile:
         df = pd.read_csv(infile, sep=',')
-        df.drop([col for col in df.columns if "Unnamed" in col], axis=1, inplace=True)
+    df.drop([col for col in df.columns if "Unnamed" in col], axis=1, inplace=True)
+    df = df.replace( {"WALKER_AID_6MWT": {"NONE": 0, "WALKER": -1, "CANE": 1 }} )
     return df
 
 def load_csv(name):
@@ -37,4 +38,11 @@ def load_csv(name):
         df = pd.read_csv(infile, sep=',', skiprows=11, names=columns)
     return df
 
+def show():
+    df = load_train()
+    print df[["PID", "WALKER_AID_6MWT"]][:10]
+
 setup()
+
+if __name__ == '__main__':
+    show()
