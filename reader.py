@@ -2,7 +2,8 @@ import os
 from os.path import dirname, basename, abspath, join, exists
 import pandas as pd
 import numpy as np
-from scipy.signal import argrelextrema
+from scipy.signal import argrelextrema, butter, lfilter, freqz
+import matplotlib.pyplot as plt
 
 VASTRAC = "VascTrac_Hackathon"
 ACTI_GRAPH = join(VASTRAC, "ActiGraph")
@@ -12,6 +13,17 @@ def setup():
     os.chdir(dirname(abspath(__file__)))
     if not exists(OUT_DIR):
         os.mkdir(OUT_DIR)
+
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
 
 def load_train():
     name="train.csv"
@@ -70,22 +82,50 @@ def get_labeled_preds(limit=10):
     data = np.array((indices, preds)).T
     return pd.DataFrame(data=data, columns=['PID', 'PRED'])
 
+def eval_preds(labeled_preds, method):
+    TRUTH_COL = 'MANUAL_STEPS'
+    tr = load_train()
+    truth = tr[['PID', TRUTH_COL]]
+    # Only joins on rows where PID matches
+    m = pd.merge(truth, labeled_preds, on=['PID'], how='inner')
+    m['DIFF'] = m[TRUTH_COL].subtract(m['PRED'])
+    m['PCT_DIFF'] = (100. * m['DIFF']) / m[TRUTH_COL]
+    avg_dif = m['DIFF'].mean()
+    std_dif = m['DIFF'].std()
+    avg_pct_dif = np.abs(m['PCT_DIFF']).mean()
+    print "Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {}".format(
+        avg_dif, std_dif, avg_pct_dif)
 
-# Setup
-setup()
+    results_file = join(OUT_DIR, "results_{}.csv".format(method))
+    m.to_csv(results_file)
 
-tr = load_train()
-truth = tr[['PID', 'MANUAL_STEPS']]
-labeled_preds = get_labeled_preds(121)
-# Only joins on rows where PID matches
-m = pd.merge(truth, labeled_preds, on=['PID'], how='inner')
-m['DIFF'] = m['MANUAL_STEPS'].subtract(m['PRED'])
-m['PCT_DIFF'] = (100. * m['DIFF']) / m['MANUAL_STEPS']
-avg_dif = m['DIFF'].mean()
-std_dif = m['DIFF'].std()
-avg_pct_dif = np.abs(m['PCT_DIFF']).mean()
-print "Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {}".format(
-    avg_dif, std_dif, avg_pct_dif)
+def eval_ours():
+    labeled_preds = get_labeled_preds(121)
+    eval_preds(labeled_preds, "OURS")
 
-results_file = join(OUT_DIR, "results.csv")
-m.to_csv(results_file)
+def eval_actigraph():
+    tr = load_train()
+    labeled_preds = tr[['PID', 'ACTIGRAPH_STEPS']]
+    labeled_preds.columns = ['PID', 'PRED']
+    eval_preds(labeled_preds, "ACTIGRAPH")
+
+def eval_vastrac():
+    tr = load_train()
+    labeled_preds = tr[['PID', 'VASCTRAC_STEPS']]
+    labeled_preds.columns = ['PID', 'PRED']
+    eval_preds(labeled_preds, "VASCTRAC")
+
+def eval_naive():
+    tr = load_train()
+    labeled_preds = tr[['PID', 'VASCTRAC_STEPS']]
+    labeled_preds['VASCTRAC_STEPS'] = 540 * np.ones(len(tr))
+    labeled_preds.columns = ['PID', 'PRED']
+    eval_preds(labeled_preds, "NAIVE")
+
+if __name__ == '__main__':
+    # Setup
+    setup()
+    eval_ours()
+    eval_actigraph()
+    eval_vastrac()
+    eval_naive()
