@@ -76,14 +76,14 @@ setup()
 
 tr = load_train()
 truth = tr[['PID', 'MANUAL_STEPS']]
-labeled_preds = get_labeled_preds(100)
+labeled_preds = get_labeled_preds(121)
 # Only joins on rows where PID matches
 m = pd.merge(truth, labeled_preds, on=['PID'], how='inner')
 m['DIFF'] = m['MANUAL_STEPS'].subtract(m['PRED'])
 m['PCT_DIFF'] = (100. * m['DIFF']) / m['MANUAL_STEPS']
 avg_dif = m['DIFF'].mean()
 std_dif = m['DIFF'].std()
-avg_pct_dif = m['PCT_DIFF'].mean()
+avg_pct_dif = np.abs(m['PCT_DIFF']).mean()
 print "Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {}".format(
     avg_dif, std_dif, avg_pct_dif)
 
