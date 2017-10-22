@@ -25,7 +25,8 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
 
 def load_train():
     name="train.csv"
-    with open(join(VASTRAC, name)) as infile:
+    # with open(join(VASTRAC, name)) as infile:
+    with open(name) as infile:
         df = pd.read_csv(infile, sep=',')
     df.drop([col for col in df.columns if "Unnamed" in col], axis=1, inplace=True)
     df = df.replace( {"WALKER_AID_6MWT": {"NONE": 0, "WALKER": -1, "CANE": 1 }} )

@@ -7,8 +7,28 @@ from sklearn.metrics import mean_squared_error
 # Internals
 from utils import load_train, OUT_DIR
 
+def select_min_abi(m):
+    m = m[np.logical_and(pd.notnull(m["RIGHT_ABI"]),
+                        pd.notnull(m["LEFT_ABI"]))]
+    valid_ids = m['PID'].values
+    x = np.minimum(m["RIGHT_ABI"].values, m["LEFT_ABI"].values)
+    m['MIN_ABI'] = x
+    return m
+
+def select_ave_abi(m):
+    m = m[np.logical_and(pd.notnull(m["RIGHT_ABI"]),
+                        pd.notnull(m["LEFT_ABI"]))]
+    valid_ids = m['PID'].values
+    x = np.mean(np.add(m["RIGHT_ABI"].values, m["LEFT_ABI"].values))
+    m['AVG_ABI'] = x
+    return m
+
 def eval_preds(labeled_preds, truth_col, metric, method):
     tr = load_train()
+    if truth_col == 'MIN_ABI':
+        tr = select_min_abi(tr)
+    elif truth_col == 'AVG_ABI':
+        tr = select_ave_abi(tr)
     truth = tr[['PID', truth_col]]
     pred_col = 'PRED'
     # Only joins on rows where PID matches
