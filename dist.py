@@ -16,6 +16,13 @@ def eval_ours():
     labeled_preds = predict_dist(121)
     eval_preds(labeled_preds, "TRACK_DISTANCE", "dist", "OURS")
 
+def eval_actigraph():
+    tr = load_train()
+    labeled_preds = tr[['PID', 'ACTIGRAPH_STEPS']]
+    labeled_preds.columns = ['PID', 'PRED']
+    labeled_preds['PRED'] *= 1.7
+    eval_preds(labeled_preds, "TRACK_DISTANCE", "steps", "ACTIGRAPH")
+
 def eval_vastrac():
     tr = load_train()
     labeled_preds = tr[['PID', 'VASCTRAC_DISTANCE']]
@@ -32,12 +39,15 @@ def eval_naive():
 def main():
     parser = argparse.ArgumentParser(description="Main")
     group = parser.add_mutually_exclusive_group()
+    group.add_argument('-a', '--actigraph', action='store_true')
     group.add_argument('-v', '--vastrac', action='store_true')
     group.add_argument('-n', '--naive', action='store_true')
     group.add_argument('-o', '--ours', action='store_true')
     args = parser.parse_args()
     if args.vastrac:
         eval_vastrac()
+    elif args.actigraph:
+        eval_actigraph()
     elif args.naive:
         eval_naive()
     else:
