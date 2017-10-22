@@ -1,2 +1,5 @@
 MainIntent say {hello|Word}
-AboutIntent about
+AboutIntent about developer
+WhatIsPadIntent what is pad
+WhatIsPadIntent tell me about pad
+ImprovePadIntent how can I improve

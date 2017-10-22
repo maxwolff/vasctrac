@@ -13,7 +13,28 @@ const BaseHandler = Alexa.CreateStateHandler(APP_STATES.MAIN, {
         var speechOutput = "The Skill Developer, Zach Zeleznick, likes hiking, swimming, and lounging by the beach";
         alexa.emit(':tellWithCard', speechOutput, cardTitle, speechOutput);
     }),
-    "AMAZON.HelpIntent": function () {
+    "MainIntent": api.wrap(function(alexa) {
+        const cardTitle = "Main";
+        const {Word} = alexa.event.request.intent.slots;
+        const {value} = Word || {value: "Hello"}
+        var speechOutput = `${value}`
+        alexa.emit(':tellWithCard', speechOutput, cardTitle, speechOutput);
+    }),
+    "WhatIsPadIntent": api.wrap(function(alexa) {
+        const cardTitle = "What is Pad?";
+        const speechOutput = "Peripheral artery disease (PAD) happens when plaque builds up in the wall of arteries in your legs, causing them to narrow, making walking painful."
+        const card = speechOutput;
+        const repromptText = "What else would you like to know?";
+        alexa.emit(':askWithCard', speechOutput, repromptText, cardTitle, card);
+    }),
+    "ImprovePadIntent": api.wrap(function(alexa) {
+        const cardTitle = "How Can I Improve?";
+        const speechOutput = "Simple walking regimens and leg exercises can ease symptoms. A doctor can recommend a good treatment plan. Other important factors are improving diet, stopping smoking, and managing diabetes."
+        const card = speechOutput;
+        const repromptText = "What else would you like to know?";
+        alexa.emit(':askWithCard', speechOutput, repromptText, cardTitle, card);
+    }),
+   "AMAZON.HelpIntent": function () {
         const {speech, card} = HELP_MESSAGES.BASE;
         const cardTitle = "Skill Help";
         const repromptText = "So how can I help?";

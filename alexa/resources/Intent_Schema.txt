@@ -22,6 +22,14 @@
             "slots": []
         },
         {
+            "intent": "ImprovePadIntent",
+            "slots": []
+        },
+        {
+            "intent": "WhatIsPadIntent",
+            "slots": []
+        },
+        {
             "intent": "MainIntent",
             "slots": [
               {
