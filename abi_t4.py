@@ -29,15 +29,18 @@ def get_labeled_preds(limit=10):
 
 def eval_ours(col):
     labeled_preds = get_labeled_preds(121)
-    eval_preds(labeled_preds, col, "abi_t3", "OURS")
+    eval_preds(labeled_preds, col, "abi_t4", "OURS")
 
 def eval_naive(col):
     tr = load_train()
     valid_ids = tr['PID'].values
-    preds = 1.0 * np.ones(len(valid_ids))
+    if col == "MIN_ABI":
+        preds = 1.0 * np.ones(len(valid_ids))
+    else:
+         preds = 0.92 * np.ones(len(valid_ids))
     data = np.array((valid_ids, preds)).T
     labeled_preds =  pd.DataFrame(data=data, columns=['PID', 'PRED'])
-    eval_preds(labeled_preds, col, "abi_t3", "NAIVE")
+    eval_preds(labeled_preds, col, "abi_t4", "NAIVE")
 
 def main():
     parser = argparse.ArgumentParser(description="Main")
