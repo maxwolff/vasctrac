@@ -1,0 +1,7 @@
+{
+  "lambda": {
+    "role": "lambda_db_execution",
+    "name": "padpiper",
+    "region": "us-east-1"
+  }
+}

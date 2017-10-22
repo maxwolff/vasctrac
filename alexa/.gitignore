@@ -4,5 +4,5 @@ node_modules
 # Ignore auto-generated schema
 utils/data
 
-# Keep _env as second last line with final newline
+# Keep _env (prefixed by *) as second last line with final newline
 *_env

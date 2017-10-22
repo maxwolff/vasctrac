@@ -62,54 +62,12 @@ const stringEval = (str) => {
     return str;
 }
 
-function extractData (med) {
-    const fields = DEFAULT_DRUG_FIELDS;
-    let payload = {};
-    fields.forEach((key) => {
-        if (med[key]) { payload[key] = med[key] }
-    });
-    return payload
-}
-
-function extractFields (med) {
-    const mapping = DRUG_FIELD_MAP;
-    let validKeys = [];
-    Object.keys(mapping).forEach((key) => {
-        if (med[mapping[key]]) { validKeys.push(key) }
-    });
-    return validKeys
-}
-
-function getFieldData (med, field) {
-    let mappedField = DRUG_FIELD_MAP[field];
-    if (mappedField === undefined) {
-        console.warn("field is undefined:", field, DRUG_FIELD_MAP)
-    }
-    let data = med[mappedField];
-    let errorString = "No data found"
-    data = (data !== "NULL" && (data || data === 0)) ? data : errorString
-    if (mappedField == DRUG_FIELDS.SIDE_EFFECTS && data !== errorString) {
-        data = new SideEffectBlob(data);
-    }
-    return data
-}
-
-function getFieldResponse (med, field) {
-    let readableField = toTitleCase(field.replace(/_/g, " "));
-    let cardTitle = `MedBox ${readableField} Information`;
-    const payload = getFieldData(med, field);
-    let speechOutput = `${readableField} information for ${med.drugName}\n${payload}`;
-    return {cardTitle: cardTitle, speechOutput: speechOutput}
-}
-
 function getAvailableCommands (med) {
     var text = "You can say: Hello, Goodbye";
     return text
 }
 
 module.exports = {
-    extractData: extractData,
-    extractFields: extractFields,
     wrap: wrap,
     handleNewSession: handleNewSession,
     parseIntentNameFromRequest: parseIntentNameFromRequest,

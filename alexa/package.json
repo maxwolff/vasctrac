@@ -6,10 +6,11 @@
   "files": [
     "src"
   ],
-  "config" : {
-    "fncname" : "padpiper"
+  "config": {
+    "fncname": "padpiper"
   },
   "scripts": {
+    "lint": "eslint ./src",
     "test": "NODE_ENV=test mocha",
     "start": "echo 'Hello World'",
     "prepare": "sed -i '' -e '/^*_env/ d' .gitignore",
@@ -26,14 +27,18 @@
     "chai": "^3.5.0",
     "claudia": "^2.10.0",
     "express": "^4.15.2",
-    "gulp": "latest",
-    "gulp-jshint": "^2.0.4",
-    "gulp-nodemon": "^2.2.1",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "mocha": "^3.2.0",
     "ntl": "^1.2.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "eslint": "^3.19.0",
+    "eslint-config-semistandard": "^11.0.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1"
   },
   "dependencies": {
     "alexa-sdk": "^1.0.9",
