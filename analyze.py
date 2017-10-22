@@ -21,8 +21,8 @@ def eval_preds(labeled_preds, truth_col, metric, method):
     std_dif = "%.2f " % m['DIFF'].std()
     avg_pct_dif = "%.2f " % np.abs(m['PCT_DIFF']).mean()
     mse = "%.2f " % mean_squared_error(m[truth_col], m[pred_col])
-    print "Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {} | MSE {}".format(
-        avg_dif, std_dif, avg_pct_dif, mse)
+    print "Ct: {} | Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {} | MSE {}".format(
+        len(m), avg_dif, std_dif, avg_pct_dif, mse)
 
     results_file = join(OUT_DIR, "{}_results_{}.csv".format(metric, method))
     m.to_csv(results_file)
