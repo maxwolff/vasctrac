@@ -19,7 +19,7 @@ def select_ave_abi(m):
     m = m[np.logical_and(pd.notnull(m["RIGHT_ABI"]),
                         pd.notnull(m["LEFT_ABI"]))]
     valid_ids = m['PID'].values
-    x = np.mean(np.add(m["RIGHT_ABI"].values, m["LEFT_ABI"].values))
+    x = np.add(m["RIGHT_ABI"].values, m["LEFT_ABI"].values) / 2
     m['AVG_ABI'] = x
     return m
 

@@ -34,7 +34,10 @@ def eval_ours(col):
 def eval_naive(col):
     tr = load_train()
     valid_ids = tr['PID'].values
-    preds = 1.0 * np.ones(len(valid_ids))
+    if col == "MIN_ABI":
+        preds = 1.0 * np.ones(len(valid_ids))
+    else:
+         preds = 0.92 * np.ones(len(valid_ids))
     data = np.array((valid_ids, preds)).T
     labeled_preds =  pd.DataFrame(data=data, columns=['PID', 'PRED'])
     eval_preds(labeled_preds, col, "abi_t3", "NAIVE")
