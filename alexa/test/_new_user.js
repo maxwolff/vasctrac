@@ -44,7 +44,7 @@ describe("Testing a session with NEW_USER", function() {
             "version": "1.0"
         }, ctx)
 
-        ctx.launchTimer();
+        // ctx.launchTimer();
 
         ctx.Promise
             .then(resp => { speechResponse = resp; done(); })
