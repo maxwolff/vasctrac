@@ -1,18 +1,20 @@
 import os
-from os.path import dirname, basename, abspath, join
+from os.path import dirname, basename, abspath, join, exists
 import pandas as pd
 import numpy as np
 from scipy.signal import argrelextrema
 
 VASTRAC = "VascTrac_Hackathon"
 ACTI_GRAPH = join(VASTRAC, "ActiGraph")
+OUT_DIR = "build"
 
 def setup():
-    os.chdir(dirname(__file__))
+    os.chdir(dirname(abspath(__file__)))
+    if not exists(OUT_DIR):
+        os.mkdir(OUT_DIR)
 
 def load_train():
     name="train.csv"
-    columns = ["Timestamp", "X", "Y", "Z" ]
     with open(join(VASTRAC, name)) as infile:
         df = pd.read_csv(infile, sep=',')
         df.drop([col for col in df.columns if "Unnamed" in col], axis=1, inplace=True)
@@ -65,11 +67,25 @@ def get_labeled_preds(limit=10):
     for name in os.listdir(ACTI_GRAPH)[:limit]:
         indices.append(int(basename(name).split(".csv")[0]))
         preds.append(calc_steps(name))
-    return np.array((indices, preds)).T
+    data = np.array((indices, preds)).T
+    return pd.DataFrame(data=data, columns=['PID', 'PRED'])
 
-labeled_preds = get_labeled_preds(100)
+
+# Setup
+setup()
+
 tr = load_train()
+truth = tr[['PID', 'MANUAL_STEPS']]
+labeled_preds = get_labeled_preds(100)
+# Only joins on rows where PID matches
+m = pd.merge(truth, labeled_preds, on=['PID'], how='inner')
+m['DIFF'] = m['MANUAL_STEPS'].subtract(m['PRED'])
+m['PCT_DIFF'] = (100. * m['DIFF']) / m['MANUAL_STEPS']
+avg_dif = m['DIFF'].mean()
+std_dif = m['DIFF'].std()
+avg_pct_dif = m['PCT_DIFF'].mean()
+print "Avg. Dif: {} | Std. Dif {} | Avg. Pct. Dif {}".format(
+    avg_dif, std_dif, avg_pct_dif)
 
-steps = tr['MANUAL_STEPS'].as_matrix()
-
-m2()
+results_file = join(OUT_DIR, "results.csv")
+m.to_csv(results_file)
