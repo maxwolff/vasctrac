@@ -15,8 +15,8 @@ from analyze import eval_preds
 def get_labeled_preds():
     tr = load_train()
     m = tr[['PID', 'RIGHT_ABI', 'LEFT_ABI']]
-    m = m[np.logical_and(pd.notnull(m["RIGHT_ABI"]),
-                        pd.notnull(m["LEFT_ABI"]))]
+    m[np.logical_not(np.logical_and(pd.notnull(m["RIGHT_ABI"]),
+    pd.notnull(m["LEFT_ABI"])))] = 0
     valid_ids = m['PID'].values
     x = np.minimum(m["RIGHT_ABI"].values, m["LEFT_ABI"].values)
     high = 1.5

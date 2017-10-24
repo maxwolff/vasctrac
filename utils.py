@@ -4,7 +4,7 @@ from os.path import dirname, basename, abspath, join, exists
 from scipy.signal import butter, lfilter, freqz
 
 VASTRAC = "VascTrac_Hackathon"
-ACTI_GRAPH = join(VASTRAC, "ActiGraph")
+ACTI_GRAPH = join(VASTRAC, "ActiGraphTest")
 OUT_DIR = "build"
 
 def setup():
@@ -24,7 +24,8 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 def load_train():
-    name="train.csv"
+    # name="train.csv"
+    name="test_table.csv"
     # with open(join(VASTRAC, name)) as infile:
     with open(name) as infile:
         df = pd.read_csv(infile, sep=',')

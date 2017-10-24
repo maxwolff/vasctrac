@@ -20,6 +20,13 @@ const BaseHandler = Alexa.CreateStateHandler(APP_STATES.MAIN, {
         var speechOutput = `${value}`
         alexa.emit(':tellWithCard', speechOutput, cardTitle, speechOutput);
     }),
+    "HowIsMyPadIntent": api.wrap(function(alexa) {
+        const cardTitle = "How's my Pad?";
+        const speechOutput = "Your ABI improved 10% this week based on your stride. You walked 5000 steps this week, which is 20% above your goal. Keep up the good work!"
+        const card = speechOutput;
+        const repromptText = "What else would you like to know?";
+        alexa.emit(':askWithCard', speechOutput, repromptText, cardTitle, card);
+    }),
     "WhatIsPadIntent": api.wrap(function(alexa) {
         const cardTitle = "What is Pad?";
         const speechOutput = "Peripheral artery disease (PAD) happens when plaque builds up in the wall of arteries in your legs, causing them to narrow, making walking painful."

@@ -3,3 +3,7 @@ AboutIntent about developer
 WhatIsPadIntent what is pad
 WhatIsPadIntent tell me about pad
 ImprovePadIntent how can I improve
+ImprovePadIntent how can I improve pad
+HowIsMyPadIntent how is my pad
+HowIsMyPadIntent how is my pad doing
+WhatIsPadIntent what is my pad
