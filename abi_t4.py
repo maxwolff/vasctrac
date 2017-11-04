@@ -6,8 +6,9 @@ from os.path import dirname, basename, abspath, join, exists
 from scipy.signal import argrelextrema
 
 # Internals
-from utils import load_train, load_csv, ACTI_GRAPH
+from utils import load_train, load_csv, ACTI_GRAPH,IPHONE
 from analyze import eval_preds
+from steps import calc_steps
 
 """
 Build a model that uses raw sensor data + covariates to predict
@@ -18,17 +19,22 @@ informative features. Cross-validation for parameter tuning is
 strongly encouraged.
 """
 
-def get_labeled_preds(limit=10):
+def get_abi_preds(device, limit=10):
     indices = []
     preds = []
-    for name in os.listdir(ACTI_GRAPH)[:limit]:
-        indices.append(int(basename(name).split(".csv")[0]))
-        preds.append(calc_steps(name))
+    for name in os.listdir(device)[:limit]:
+        stripped = basename(name).split(".csv")[0]
+        if device == IPHONE and 'ACCEL' in stripped:
+            indices.append(int(stripped.replace("_ACCEL", "")))
+            preds.append(calc_steps(name,'iphone'))
+        elif device == ACTI_GRAPH: 
+            indices.append(int(stripped))
+            preds.append(calc_steps(name,'actigraph'))
     data = np.array((indices, preds)).T
     return pd.DataFrame(data=data, columns=['PID', 'PRED'])
 
 def eval_ours(col):
-    labeled_preds = get_labeled_preds(121)
+    labeled_preds = get_abi_preds(ACTI_GRAPH)
     eval_preds(labeled_preds, col, "abi_t4", "OURS")
 
 def eval_naive(col):
@@ -40,6 +46,7 @@ def eval_naive(col):
          preds = 0.92 * np.ones(len(valid_ids))
     data = np.array((valid_ids, preds)).T
     labeled_preds =  pd.DataFrame(data=data, columns=['PID', 'PRED'])
+    print 'eval naive '
     eval_preds(labeled_preds, col, "abi_t4", "NAIVE")
 
 def main():

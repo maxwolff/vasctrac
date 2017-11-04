@@ -4,9 +4,10 @@ from os.path import dirname, basename, abspath, join, exists
 from scipy.signal import butter, lfilter, freqz
 
 VASTRAC = "VascTrac_Hackathon"
-ACTI_GRAPH = join(VASTRAC, "ActiGraphTest")
+ACTI_GRAPH = join(VASTRAC, "ActiGraph")
+IPHONE = join(VASTRAC, "iPhone")
 OUT_DIR = "build"
-
+trainFilename = 'train.csv'
 def setup():
     os.chdir(dirname(abspath(__file__)))
     if not exists(OUT_DIR):
@@ -24,8 +25,8 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 def load_train():
-    # name="train.csv"
-    name="test_table.csv"
+    name = trainFilename
+    #name="test_table.csv"
     # with open(join(VASTRAC, name)) as infile:
     with open(name) as infile:
         df = pd.read_csv(infile, sep=',')
@@ -33,11 +34,15 @@ def load_train():
     df = df.replace( {"WALKER_AID_6MWT": {"NONE": 0, "WALKER": -1, "CANE": 1 }} )
     return df
 
-def load_csv(name):
+def load_csv(name,device):
     name = name if name.endswith(".csv") else "{}.csv".format(name)
     columns = ["Timestamp", "X", "Y", "Z" ]
-    with open(join(ACTI_GRAPH, name)) as infile:
-        df = pd.read_csv(infile, sep=',', skiprows=11, names=columns)
+    if device == 'iphone':
+        with open(join(IPHONE, name)) as infile:
+            df = pd.read_csv(infile, sep=',',skiprows=0, names=columns)
+    elif device == 'actigraph':
+        with open(join(ACTI_GRAPH, name)) as infile:
+            df = pd.read_csv(infile, sep=',', skiprows=11, names=columns)
     return df
 
 def show():

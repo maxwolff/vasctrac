@@ -19,8 +19,9 @@ def calc_magnitudes(df):
     ax, ay, az = df['X'].as_matrix(),  df['Y'].as_matrix(), df['Z'].as_matrix()
     return np.sqrt(np.power(ax,2) + np.power(ay,2) + np.power(az,2))
 
-def calc_steps(name, bin_size=30):
-    df = load_csv(name)
+def calc_steps(name, device, bin_size=30):
+    df = load_csv(name,device)
+   #  print df.shape()
     A = calc_magnitudes(df)
     return len(argrelextrema(A, np.less, order=bin_size)[0])
 
