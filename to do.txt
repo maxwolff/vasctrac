@@ -1,0 +1,10 @@
+to do
+
+fix pred <> abi difference. add iphone reader, incl pedometer. compare iphonea and actigraph results. 
+
+compare add walker.py to pedometer. come up with some naive statistical thing for it. 
+
+move min vs average ABI logic to abi t4, not analyze 
+
+
+# steps in first half vs second half 

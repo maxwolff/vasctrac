@@ -6,7 +6,7 @@ from os.path import dirname, basename, abspath, join, exists
 from scipy.signal import argrelextrema
 
 # Internals
-from utils import load_train, load_csv, ACTI_GRAPH
+from utils import load_train, load_csv, ACTI_GRAPH, IPHONE
 from analyze import eval_preds
 
 def calc_magnitudes(df):
@@ -25,18 +25,27 @@ def calc_steps(name, device, bin_size=30):
     A = calc_magnitudes(df)
     return len(argrelextrema(A, np.less, order=bin_size)[0])
 
-def get_labeled_preds(limit=10):
+def get_steps_preds(device, limit=10):
     indices = []
     preds = []
-    for name in os.listdir(ACTI_GRAPH)[:limit]:
-        indices.append(int(basename(name).split(".csv")[0]))
-        preds.append(calc_steps(name))
+    for name in os.listdir(device)[:limit]:
+        stripped = basename(name).split(".csv")[0]
+        if device == IPHONE and 'ACCEL' in stripped:
+            indices.append(int(stripped.replace("_ACCEL", "")))
+            preds.append(calc_steps(name,'iphone'))
+        elif device == ACTI_GRAPH: 
+            indices.append(int(stripped))
+            preds.append(calc_steps(name,'actigraph'))
     data = np.array((indices, preds)).T
     return pd.DataFrame(data=data, columns=['PID', 'PRED'])
 
 def eval_ours():
-    labeled_preds = get_labeled_preds(121)
-    eval_preds(labeled_preds, "MANUAL_STEPS", "steps", "OURS")
+    labeled_preds = get_steps_preds(ACTI_GRAPH,121)
+    tr = load_train()
+    truth = tr[['PID', "MANUAL_STEPS"]]
+
+
+    eval_preds(labeled_preds, truth, "steps", "OURS",'steps',"MANUAL_STEPS")
 
 def eval_actigraph():
     tr = load_train()

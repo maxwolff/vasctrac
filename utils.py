@@ -39,7 +39,7 @@ def load_csv(name,device):
     columns = ["Timestamp", "X", "Y", "Z" ]
     if device == 'iphone':
         with open(join(IPHONE, name)) as infile:
-            df = pd.read_csv(infile, sep=',',skiprows=0, names=columns)
+            df = pd.read_csv(infile, sep=',',skiprows=1, names=columns)
     elif device == 'actigraph':
         with open(join(ACTI_GRAPH, name)) as infile:
             df = pd.read_csv(infile, sep=',', skiprows=11, names=columns)
