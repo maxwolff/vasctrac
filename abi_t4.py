@@ -1,3 +1,4 @@
+
 import numpy as np
 import argparse
 import os
@@ -40,9 +41,10 @@ def get_steptimes(device,limit=200): # gets step times for
     df.index.name = "PID"
     return df
 
-def calc_step_times(name, device,bin_size=30):
+def calc_step_times(name, device,bin_size=28):
     df = load_csv(name,device)
 #   all_timestamps = df['Timestamp']
+    pdb.set_trace()
     A = calc_magnitudes(df)
     indices = argrelextrema(A, np.less, order=bin_size)[0]
     timestamps = []
@@ -77,7 +79,7 @@ def get_iphone_timestamp_delta(df,indices): # time between steps. dont use yet.
 
 def eval_ours(): # wrong function. predicts steps, not abi
     labeled_preds = predict_dist(121)
-    eval_preds(labeled_preds, "TRACK_DISTANCE", "dist", "OURS")
+    eval_preds(labeled_preds, "TRACK_DISTANCE", "our_dist_pred")
 
 def eval_naive(col): # establish baseline for ABI preds. do not use.
     tr = load_train() #grab all PIDs from train set, make predictions
@@ -89,7 +91,7 @@ def eval_naive(col): # establish baseline for ABI preds. do not use.
     data = np.array((valid_ids, preds)).T
     labeled_preds =  pd.DataFrame(data=data, columns=['PID', 'PRED'])
     print 'eval naive '
-    eval_preds(labeled_preds, col, "abi_t4", "NAIVE",'PRED')
+    eval_preds(labeled_preds, col, "abi_t4", "naive_abi")
 
 
 def get_fatigue_ratio(data): 

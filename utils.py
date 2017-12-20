@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from os.path import dirname, basename, abspath, join, exists
 from scipy.signal import butter, lfilter, freqz
+import pdb
 
 VASTRAC = "VascTrac_Hackathon"
 ACTI_GRAPH = join(VASTRAC, "ActiGraph")
@@ -43,7 +44,8 @@ def load_csv(name,device):
     elif device == 'actigraph':
         with open(join(ACTI_GRAPH, name)) as infile:
             df = pd.read_csv(infile, sep=',', skiprows=11, names=columns)
-    return df
+    if df.shape[0] > 20000:
+        return df
 
 def show():
     df = load_train()

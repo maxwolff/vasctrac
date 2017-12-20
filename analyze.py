@@ -25,21 +25,22 @@ def select_avg_abi(m):
 
 
 
-def eval_preds(labeled_preds, truth_col, metric, method,pred_type):
+def eval_preds(labeled_preds, truth_col, description):
     pred_col = 'PRED'
     tr = load_train()
+
     if truth_col == 'MIN_ABI':
         tr = select_min_abi(tr)
     elif truth_col == 'AVG_ABI':
         tr = select_avg_abi(tr)
     truth = tr[['PID', truth_col]]
-    
-    #pdb.set_trace()
+
 
     # Only joins on rows where PID matches
     m = pd.merge(truth, labeled_preds, on=['PID'], how='inner')
     # Remove cases where truth is null
     m = m[pd.notnull(m[truth_col])]
+    print m.head()
 
     m['DIFF'] = m[truth_col].subtract(m[pred_col])
     m['PCT_DIFF'] = (100. * m['DIFF']) / m[truth_col]
@@ -51,9 +52,7 @@ def eval_preds(labeled_preds, truth_col, metric, method,pred_type):
         len(m), avg_dif, std_dif, avg_pct_dif, mse)
     
     m = labeled_preds#[['PID', 'PRED']]
-    results_file = join(OUT_DIR, "{}_results_{}.csv".format(metric, method,pred_type))
-    print pred_type
-    print truth_col
+    results_file = join(OUT_DIR, "results_{}.csv".format(description))
     m.to_csv(results_file)
 
 
