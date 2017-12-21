@@ -43,7 +43,7 @@ def get_steptimes(device,limit=200): # gets step times for
 def calc_step_times(name, device,bin_size=30):
     df = load_csv(name,device)
 #   all_timestamps = df['Timestamp']
-    A = calc_magnitudes(df)
+    A = calc_magnitudes(df)[0]
     indices = argrelextrema(A, np.less, order=bin_size)[0]
     timestamps = []
     if device == 'actigraph': 
@@ -88,7 +88,6 @@ def eval_naive(col): # establish baseline for ABI preds. do not use.
          preds = 0.92 * np.ones(len(valid_ids))
     data = np.array((valid_ids, preds)).T
     labeled_preds =  pd.DataFrame(data=data, columns=['PID', 'PRED'])
-    print 'eval naive '
     eval_preds(labeled_preds, col, "abi_t4", "NAIVE",'PRED')
 
 
@@ -133,7 +132,7 @@ if __name__ == '__main__':
     tr = select_avg_abi(load_train())
     truth = tr[['PID', 'AVG_ABI']]
     m = f.merge(truth, on = 'PID')
-    #pdb.set_trace()
+    pdb.set_trace()
     print m.head()
     print "Fatigue Ratio Correlation", m['ratio'].corr(m['AVG_ABI'])
 
