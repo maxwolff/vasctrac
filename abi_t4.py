@@ -1,3 +1,5 @@
+'Take accelerometer data and predict ABIs'
+
 import numpy as np
 import argparse
 import os
@@ -10,13 +12,20 @@ import pdb
 
 # Internals
 from utils import load_train,load_csv, ACTI_GRAPH,IPHONE
-from steps import get_steps_preds
 from analyze import eval_preds, select_min_abi, select_avg_abi
-from steps import calc_magnitudes,calc_steps
+from steps import calc_magnitudes,calc_steps,get_steps_preds,calc_step_indices
 
-def predict_dist(limit): # dont use in this file
+# params 
+avg_step_length = 1.7 
+limit=200
+order=30 # filter
+
+# fatigue step counts 
+startCount = 100 
+endCount = 400 # optimize these! 
+
+def predict_dist(limit): 
     labeled_preds = get_steps_preds(limit)
-    avg_step_length = 1.7
     labeled_preds['PRED'] *= avg_step_length
     return labeled_preds
 
@@ -24,7 +33,7 @@ def makeDateTimeObj(timeString): # used for reading actigraph timestamps
     obj = datetime.strptime(timeString, "%m/%d/%Y %H:%M:%S.%f")
     return obj
 
-def get_steptimes(device,limit=200): # gets step times for 
+def get_steptimes(device): # gets step times for 
     indices = []
     steps = []
     for name in os.listdir(device)[:limit]:
@@ -40,11 +49,11 @@ def get_steptimes(device,limit=200): # gets step times for
     df.index.name = "PID"
     return df
 
-def calc_step_times(name, device,bin_size=30):
+def calc_step_times(name, device):
     df = load_csv(name,device)
 #   all_timestamps = df['Timestamp']
     A = calc_magnitudes(df)[0]
-    indices = argrelextrema(A, np.less, order=bin_size)[0]
+    indices = calc_step_indices(A,order)
     timestamps = []
     if device == 'actigraph': 
         #return get_actigraph_timestamps(df,indices)
@@ -97,9 +106,9 @@ def get_fatigue_ratio(data):
         count1 = 0
         count2 = 0
         for step in data.loc[patientNum]:
-            if step < 100: 
+            if step < startCount: 
                 count1 += 1
-            if 100 < step < 400: #  MODIFY ME!
+            if startCount < step < endCount: 
                 count2 += 1
         if count1 != 0 and count2 != 0: # remove 0s 
             arr.append([patientNum,count1,count2, (1.0*count1/count2)])
@@ -132,8 +141,8 @@ if __name__ == '__main__':
     tr = select_avg_abi(load_train())
     truth = tr[['PID', 'AVG_ABI']]
     m = f.merge(truth, on = 'PID')
-    pdb.set_trace()
-    print m.head()
+    #pdb.set_trace()
+    m.head()
     print "Fatigue Ratio Correlation", m['ratio'].corr(m['AVG_ABI'])
 
 '''
