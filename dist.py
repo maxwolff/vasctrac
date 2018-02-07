@@ -1,3 +1,5 @@
+'Given steps, predict distance walked'
+
 import numpy as np
 import argparse
 

@@ -8,14 +8,12 @@ from scipy.signal import argrelextrema
 # Internals
 from utils import load_train, load_csv, ACTI_GRAPH, IPHONE
 from analyze import eval_preds
-
-import pdb
-
-from adaptiveStepJerkThreshold import adaptive_step_jerk_threshold
-from adaptiveJerkPaceBuffer import adaptive_jerk_pace_buffer
-import numpy as np
 from scipy.signal import butter, lfilter, freqz
-import matplotlib.pyplot as plt
+from adaptive_jerk_pace_buffer import adaptive_jerk_pace_buffer
+from adaptiveStepJerkThreshold import adaptive_step_jerk_threshold
+import pdb
+from datetime import datetime, date, time
+
 
 
 def butter_lowpass(cutoff, fs, order=5):
@@ -31,7 +29,6 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
 
 
 def calc_magnitudes(df):
-    """Should do some filtering here"""
     # See:
     # - https://github.com/danielmurray/adaptiv
     # - https://dsp.stackexchange.com/questions/40533/triaxial-accelerometer-to-single-signal to get magnitude
@@ -42,27 +39,35 @@ def calc_magnitudes(df):
     order = 3
     fs = 50.0  # sample rate, Hz
     cutoff = 3.667  # desired cutoff frequency of the filter, Hz
-    # Filter the data, and plot both the original and filtered signals.
-
-    r = butter_lowpass_filter(r_data, cutoff, fs, order)
+    r_data = butter_lowpass_filter(r_data, cutoff, fs, order) 
     return r_data, df["Timestamp"]
 
+def toSecs(dt):
+    dt = datetime.strptime(dt, "%m/%d/%Y %H:%M:%S.%f")
+    return (dt - datetime(1970,1,1)).total_seconds()
+
+def calc_step_indices(magnitudes,order):
+    return argrelextrema(magnitudes, np.less, order=order)[0]
 
 def calc_steps(name, device, bin_size=28):
     df = load_csv(name,device)
-   #  print df.shape()
+    B = calc_magnitudes(df)
+    timestamps = np.array(B[1].apply(toSecs))
+    magnitudes = calc_magnitudes(df)[0]
+    return len(argrelextrema(magnitudes, np.less, order=bin_size)[0])
+'''
+    r = B[0] # magnitudes
     pdb.set_trace()
-    if calc_magnitudes(df):
-        m, timestamps = calc_magnitudes(df)
-        return len(argrelextrema(m, np.less, order=bin_size)[0])
+    #peaks, troughs, avgs = adaptive_jerk_pace_buffer(r,timestamps)
+    jumps, avgs = adaptive_step_jerk_threshold(r,timestamps)
+    peak_ts = [peak['ts'] for peak in peaks]
+    peak_val = [peak['val'] for peak in peaks]
+    trough_ts = [trough['ts'] for trough in troughs]
+    trough_val = [trough['val'] for trough in troughs]
+    print("Adaptive Jerk Pace Buffer Steps:", len(troughs))
 
-'''    pdb.set_trace()
-    peaks, troughs, avgs = adaptive_jerk_pace_buffer(m, timestamps)
-    print "peaks", peaks
-    print "troughs?"'''
-    # peaks, troughs, avgs = ajpb.adaptive_jerk_pace_buffer(r, timestamps)
-
-
+    magnitudes = calc_magnitudes(df)[0]
+    return len(argrelextrema(magnitudes, np.less, order=bin_size)[0])'''
 def get_steps_preds(device, limit=10):
     indices = []
     preds = []
@@ -82,7 +87,7 @@ def get_steps_preds(device, limit=10):
 
 def eval_ours():
     labeled_preds = get_steps_preds(ACTI_GRAPH,121)
-    eval_preds(labeled_preds,"MANUAL_STEPS", "our_step_preds")
+    eval_preds(labeled_preds, "MANUAL_STEPS", "steps", "OURS","MANUAL_STEPS")
 
 def eval_actigraph():
     tr = load_train()

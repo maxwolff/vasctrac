@@ -1,7 +1,9 @@
 import numpy as np
 
-GRAVITY = 10
+import pdb
 
+GRAVITY = 1.1 
+import pdb
 
 def adaptive_step_jerk_threshold(data, timestamps):
     last_state = None
@@ -52,6 +54,9 @@ def adaptive_step_jerk_threshold(data, timestamps):
 
                     jerk = last_peak['val'] - last_trough['val']
 
+                    print "jerk", jerk
+                    print "threshold", jerk_mean - 4 * jerk_dev
+
                     if jerk > jerk_mean - 4 * jerk_dev:
                         jerk_dev = abs(jerk_mean - jerk) * beta + jerk_dev * (1 - beta)
                         jerk_mean = jerk * alpha + jerk_mean * (1 - alpha)
@@ -71,4 +76,6 @@ def adaptive_step_jerk_threshold(data, timestamps):
 
         last_state = current_state
 
+
     return np.array(peak_troughs), np.array(meta)
+
