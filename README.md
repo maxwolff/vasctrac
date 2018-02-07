@@ -44,5 +44,5 @@ other files: [Adaptiv](https://github.com/danielmurray/adaptiv) is a project wit
 
 - get rid of noisy patients
 - use iphone pedometer to predict ABI
-- integrate adaptiv algorithms. missing piece is tuning params
+- integrate adaptiv algorithms. missing piece is tuning params. working in adaptiveStepJerkThreshold.py
 - master regression for ABI with 'fatigue' measure, step count, demographics (diabetes y/n, age, smoking) etc. 
