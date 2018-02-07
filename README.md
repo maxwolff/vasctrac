@@ -11,6 +11,8 @@ Winner of the Vasctrac Data Challenge at the Stanford Health ++ Hackathon, Oct. 
 
 First, we took the magnitude of the (x,y,z) sensor readings (steps.py). Next, we used a low-pass butterworth filter to smooth noise in the data (steps.py).  We found steps by looking for relative extrema in the magnitude (steps.py). We found a window of .6 seconds worked best, roughly our average stride duration (30 data points on each side * .01 seconds * both sides = .6 second window on each side). 
 
+To predict distance, we calculated expected steps and multiplied by a constant representing average step length. We found this to be 1.7 feet (dist.py). 
+
 One hurdle in our analysis was that the elderly population at highest risk for PAD is also at high risk for several other gait-effecting conditions (arthritis, bad hip, etc). Vasctrac hypothesized that the charactaristic swelling pain from PAD could differentiate PAD-induced walking difficulty from the more consistent pain from other conditions. To test this, we created found the ratio of # steps taken during seconds 0 - 100 to steps taken in seconds and 100 - 400 (abi_t4.py). We found this measure had a .25 correlation with ABI, not huge, but enough to be interesting. 
 
 
